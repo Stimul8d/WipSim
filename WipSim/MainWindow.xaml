@@ -1,0 +1,282 @@
+﻿<Window xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"  x:Class="WipSim.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="http://research.microsoft.com/DynamicDataDisplay/1.0"
+        WindowState="Maximized" WindowStartupLocation="CenterScreen"
+        DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
+        Title="WipSim : Kanban Simulator" Height="900" Width="1024">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="350"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <DataGrid ItemsSource="{Binding Tasks}" AutoGenerateColumns="False"
+                Background="#33666666"
+                GridLinesVisibility="Vertical" CanUserDeleteRows="False" CanUserReorderColumns="False"
+                CanUserResizeColumns="False" CanUserResizeRows="False" CanUserSortColumns="False"
+                HorizontalContentAlignment="Stretch" Margin="0,1,0,-1" BorderThickness="0" AlternatingRowBackground="#FFF0F0F0" RowBackground="WhiteSmoke" RowHeight="40" VerticalGridLinesBrush="#05000000" SelectionMode="Single">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                        <Setter Property="Background" Value="WhiteSmoke"/>
+                        <Setter Property="Foreground" Value="#CC000000"/>
+                        <Setter Property="Padding" Value="10"/>
+                        <Setter Property="LayoutTransform">
+                            <Setter.Value>
+                                <RotateTransform Angle="270" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="#">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Id}" Foreground="#99666666" FontSize="18" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Backlog">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Padding="3" Width="40">
+                                    <Border CornerRadius="6" Background="#66FF0000" Visibility="{Binding InBacklog}">
+                                    </Border>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Analysis">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Padding="3" Width="80">
+                                    <Grid>
+                                        <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding LeftInAnalysis, StringFormat=N2}" TextAlignment="Center" Foreground="LightGray"/>
+                                        <Border CornerRadius="6" Background="#7FADD8E6" Visibility="{Binding InAnalysis}">
+                                            <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding LeftInAnalysis, StringFormat=N2}" TextAlignment="Center" Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Dev">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Padding="3" Width="80">
+                                    <Grid>
+                                        <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding LeftInDev, StringFormat=N2}" TextAlignment="Center" Foreground="LightGray"/>
+                                        <Border CornerRadius="6" Background="#7FADD8E6" Visibility="{Binding InDev}">
+                                            <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding LeftInDev, StringFormat=N2}" TextAlignment="Center" Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Testing" CanUserReorder="False" CanUserResize="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Padding="3" Width="80">
+                                    <Grid>
+                                        <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding LeftInTest, StringFormat=N2}" TextAlignment="Center" Foreground="LightGray"/>
+                                        <Border CornerRadius="6" Background="#7FADD8E6" Visibility="{Binding InTest}">
+                                            <TextBlock VerticalAlignment="Center" FontSize="18" Text="{Binding LeftInTest, StringFormat=N2}" TextAlignment="Center" Foreground="White"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Done">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Padding="3" Width="40">
+                                    <Border CornerRadius="6" Background="#7F90EE90" Visibility="{Binding InDone}">
+                                    </Border>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Total ">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <ProgressBar Background="Transparent" Orientation="Vertical" Margin="5" BorderThickness="0" Foreground="#33666666" Minimum="0" Maximum="{Binding MaxTotalWork}" Value="{Binding TotalWork, Mode=OneWay}"/>
+                                    <TextBlock Margin="10" FontSize="18" Foreground="#33666666" Text="{Binding TotalWork, StringFormat=N2}" VerticalAlignment="Center" TextAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Start">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock FontSize="18" Foreground="#99666666" Text="{Binding StartTime}" VerticalAlignment="Center" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="End">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock FontSize="18" Foreground="#99666666" Text="{Binding EndTime}" VerticalAlignment="Center" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Lead">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock FontSize="18" Foreground="#99666666" Text="{Binding LeadTime}" VerticalAlignment="Center" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Cycle">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock FontSize="18" Foreground="#99666666" VerticalAlignment="Center" Text="{Binding CycleTime}" TextAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!--CHART-->
+            <Grid Background="#0A000000" Visibility="{Binding ChartVisibility}"
+                Grid.Row="1" 
+                  >
+                <TextBlock Text="Burndown" TextAlignment="Center" Margin="0,10,0,0" FontSize="21" Foreground="#33666666"/>
+                <telerik:RadChart Background="Transparent" Height="160" BorderThickness="0" 
+                                                      ItemsSource="{Binding BurndownTicks}" >
+                    <telerik:RadChart.DefaultView>
+                        <telerik:ChartDefaultView>
+                            <telerik:ChartDefaultView.ChartArea>
+                                <telerik:ChartArea>
+                                    <telerik:ChartArea.AxisY>
+                                        <telerik:AxisY MinorTicksVisibility="Collapsed" AutoRange="False" Step="5" MinValue="0" MaxValue="{Binding MaxConstraint}"></telerik:AxisY>
+                                    </telerik:ChartArea.AxisY>
+                                    <telerik:ChartArea.AxisX>
+                                        <telerik:AxisX></telerik:AxisX>
+                                    </telerik:ChartArea.AxisX>
+                                </telerik:ChartArea>
+                            </telerik:ChartDefaultView.ChartArea>
+                            <telerik:ChartDefaultView.ChartLegend>
+                                <telerik:ChartLegend Visibility="Collapsed"/>
+                            </telerik:ChartDefaultView.ChartLegend>
+                        </telerik:ChartDefaultView>
+                    </telerik:RadChart.DefaultView>
+                    <telerik:RadChart.SeriesMappings>
+                        <telerik:SeriesMapping>
+                            <telerik:SeriesMapping.SeriesDefinition>
+                                <!--<telerik:BarSeriesDefinition/>-->
+                                <!--<telerik:SplineSeriesDefinition/>-->
+                                <telerik:LineSeriesDefinition/>
+                            </telerik:SeriesMapping.SeriesDefinition>
+                            <telerik:SeriesMapping.ItemMappings>
+                                <telerik:ItemMapping DataPointMember="XValue" FieldName="StepNumber"></telerik:ItemMapping>
+                                <telerik:ItemMapping DataPointMember="YValue" FieldName="TasksRemaining"></telerik:ItemMapping>
+                            </telerik:SeriesMapping.ItemMappings>
+                        </telerik:SeriesMapping>
+                    </telerik:RadChart.SeriesMappings>
+                </telerik:RadChart>
+            </Grid>
+        </Grid>
+        <DockPanel Grid.Column="1">
+            <Border Background="#0A000000" DockPanel.Dock="Top" Padding="5">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Top">
+                        <Border>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Day, StringFormat=Day \{0\}}" TextAlignment="Center" FontSize="32" Foreground="#CC000000"/>
+                                <UniformGrid Rows="2" Columns="3" Margin="0,10,0,0">
+                                    <TextBlock TextAlignment="Center" Text="{Binding AverageCompletionTime, StringFormat=AVG : {0:N2}}" Foreground="#99666666" FontSize="16"/>
+                                    <TextBlock TextAlignment="Center" Text="{Binding MinTime, StringFormat=MIN : {0:N2}}" Foreground="#99666666" FontSize="16"/>
+                                    <TextBlock TextAlignment="Center" Text="{Binding MaxTime, StringFormat=MAX : {0:N2}}" Foreground="#99666666" FontSize="16"/>
+                                    <TextBlock TextAlignment="Center" Text="{Binding StandardDeviation, StringFormat=STM : {0:N2}}" Foreground="#99666666" FontSize="16"/>
+                                    <TextBlock TextAlignment="Center" Text="{Binding WastedManDays, StringFormat=WST : {0:N2}}" Foreground="#99666666" FontSize="16"/>
+                                </UniformGrid>
+
+                                <Grid Height="40"
+                                      Margin="15,10,15,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition></ColumnDefinition>
+                                        <ColumnDefinition></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Margin="5" Command="{Binding StepCommand}" Foreground="#99666666" Content="Step"/>
+                                    <Button Grid.Column="1" Margin="5" Command="{Binding CompleteCommand}" Content="Complete" Foreground="#99666666"/>
+                                </Grid>
+
+                                <Border Background="#05000000">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding NumberOfTasks, StringFormat=Generate Work : {0} Tasks}" FontSize="21" Foreground="#33666666"/>
+                                        <DockPanel Margin="15,0,1,0" Height="40">
+                                            <Slider Value="{Binding NumberOfTasks}" VerticalAlignment="Center"  Maximum="50" Margin="0,0,10,0"
+                                                Ticks="{Binding Ticks}" TickPlacement="BottomRight"/>
+                                        </DockPanel>
+                                        <UniformGrid Height="40" Rows="1" Margin="15,0,15,10">
+                                            <Button Margin="5" Command="{Binding GenerateEqualWorkCommand}" 
+                                                    Foreground="#99666666" Content="Equal"/>
+                                            <Button Margin="5" Command="{Binding GeneratePartiallyEqualWorkCommand}" 
+                                                    Content="Partially Equal" Foreground="#99666666"/>
+                                            <Button Margin="5" Command="{Binding GenerateRandomWorkCommand}" 
+                                                    Content="Random" Foreground="#99666666"/>
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Border>
+
+                                <!--TeamSize-->
+                                <Border Background="#07000000">
+                                    <Grid>
+                                        <TextBlock Text="{Binding TeamSize, StringFormat=Team of {0}}" FontSize="21" Foreground="#33666666"/>
+                                        <DockPanel Margin="15,30,15,15">
+                                            <CheckBox Visibility="Collapsed" Width="110" DockPanel.Dock="Right" VerticalAlignment="Center" IsChecked="{Binding EnableSwarming}" Content="Allow Swarming" Foreground="#99666666"/>
+                                            <StackPanel Margin="0,0,10,0">
+                                                <Slider Minimum="1" Maximum="25" Value="{Binding TeamSize}" TickFrequency="1" TickPlacement="Both" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                    <Border Background="#0A000000">
+                        <StackPanel>
+                            <TextBlock Text="Work In Progress" FontSize="21" Foreground="#33666666"/>
+                            <UniformGrid  Rows="1" Margin="15,10,15,10">
+                                <ToggleButton IsChecked="{Binding LimitByTasksPerWorker}" Margin="0,5" 
+                                              Height="40" Foreground="#99666666" Content="Limit By Worker"/>
+                                <ToggleButton IsChecked="{Binding LimitByColumn}" Margin="0,5" Height="40" Foreground="#99666666" Content="Limit By Column"/>
+                            </UniformGrid>
+
+                            <UniformGrid Visibility="{Binding LimitByColumnVisibility}" Rows="1" Margin="15,0,15,15">
+                                <StackPanel>
+                                    <TextBlock Foreground="#99666666" TextAlignment="Center" 
+                                               Text="{Binding AnalysisWIP, StringFormat=Analysis : {0}}"></TextBlock>
+                                    <Slider Minimum="1" Maximum="{Binding MaxConstraint}" Value="{Binding AnalysisWIP}" TickFrequency="1" TickPlacement="BottomRight"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Foreground="#99666666" TextAlignment="Center" 
+                                               Text="{Binding DevWIP, StringFormat=Dev : {0}}"></TextBlock>
+                                    <Slider Minimum="1" Maximum="{Binding MaxConstraint}" Value="{Binding DevWIP}" TickFrequency="1" TickPlacement="BottomRight"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Foreground="#99666666" TextAlignment="Center" 
+                                               Text="{Binding TestWIP, StringFormat=Test : {0}}"></TextBlock>
+                                    <Slider Minimum="1" Maximum="{Binding MaxConstraint}" Value="{Binding TestWIP}" TickFrequency="1" TickPlacement="BottomRight"/>
+                                </StackPanel>
+                            </UniformGrid>
+
+                            <StackPanel Visibility="{Binding LimitByTaskPerWorkerVisibility}">
+                                <TextBlock Foreground="#99666666" TextAlignment="Center" Text="{Binding WorkerWipLimit, StringFormat=Tasks Per Worker: {0}}"></TextBlock>
+                                <Slider DockPanel.Dock="Top" Margin="15,0,15,15" Minimum="1" Maximum="{Binding MaxWorkerWipLimit}" Value="{Binding WorkerWipLimit}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+    </Grid>
+</Window>
