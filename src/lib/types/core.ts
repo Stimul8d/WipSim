@@ -1,3 +1,5 @@
+import type { TaskStatus, TaskType } from './constants';
+
 export interface Worker {
     id: string
     name: string
@@ -18,21 +20,10 @@ export interface Task {
     blockedBy?: Task[]
 }
 
-export enum TaskType {
-    FRONTEND = 'Frontend',
-    BACKEND = 'Backend',
-    DEVOPS = 'DevOps',
-    QA = 'Testing'
-}
-
-export enum TaskStatus {
-    BACKLOG = 'Backlog',
-    IN_PROGRESS = 'In Progress',
-    BLOCKED = 'Blocked',
-    DONE = 'Done'
-}
-
 export interface Skill {
     type: TaskType
     level: number // 1-5
 }
+
+// Re-export for convenience
+export type { TaskStatus, TaskType };
