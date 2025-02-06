@@ -27,6 +27,10 @@
             } : undefined
         }))
     ];
+
+    function getStagePosition(task: Task): number {
+        return Math.min(Math.floor(task.progress / 20), 4);
+    }
 </script>
 
 <main>
@@ -92,46 +96,13 @@
                         <td>{task.type}</td>
                         <td>{task.assignedTo?.name || '-'}</td>
                         
-                        <td class="stage-col">
-                            {#if task.status === TaskStatus.BACKLOG && task.progress < 20}
-                                <div class="progress-wrap">
-                                    <progress value={task.progress} max="100" />
-                                    <div class="marker" style="left: {task.progress}%" />
-                                </div>
-                            {/if}
-                        </td>
-                        <td class="stage-col">
-                            {#if task.status === TaskStatus.BACKLOG && task.progress >= 20}
-                                <div class="progress-wrap">
-                                    <progress value={task.progress} max="100" />
-                                    <div class="marker" style="left: {task.progress}%" />
-                                </div>
-                            {/if}
-                        </td>
-                        <td class="stage-col">
-                            {#if task.status === TaskStatus.IN_PROGRESS}
-                                <div class="progress-wrap">
-                                    <progress value={task.progress} max="100" />
-                                    <div class="marker" style="left: {task.progress}%" />
-                                </div>
-                            {/if}
-                        </td>
-                        <td class="stage-col">
-                            {#if task.status === TaskStatus.BLOCKED}
-                                <div class="progress-wrap">
-                                    <progress value={task.progress} max="100" />
-                                    <div class="marker" style="left: {task.progress}%" />
-                                </div>
-                            {/if}
-                        </td>
-                        <td class="stage-col">
-                            {#if task.status === TaskStatus.DONE}
-                                <div class="progress-wrap">
-                                    <progress value={task.progress} max="100" />
-                                    <div class="marker" style="left: {task.progress}%" />
-                                </div>
-                            {/if}
-                        </td>
+                        {#each Array(5) as _, i}
+                            <td class="stage-col">
+                                {#if getStagePosition(task) === i}
+                                    <div class="work-token" class:blocked={task.status === TaskStatus.BLOCKED} />
+                                {/if}
+                            </td>
+                        {/each}
                         
                         <td class="mono">2m</td>
                     </tr>
@@ -185,48 +156,23 @@
     .stage-col {
         width: 100px;
         padding: 0.5rem !important;
+        text-align: center;
+        border-left: 1px solid var(--card-border-color);
     }
 
-    .progress-wrap {
-        position: relative;
+    .work-token {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        margin: 0 auto;
+        background: var(--primary);
     }
 
-    progress {
-        width: 100%;
-        height: 0.5rem;
-    }
-
-    .marker {
-        position: absolute;
-        top: -3px;
-        width: 2px;
-        height: 12px;
-        background: var(--contrast);
-        transform: translateX(-50%);
+    .work-token.blocked {
+        background: var(--del-color);
     }
 
     .mono {
         font-family: monospace;
-    }
-
-    /* Progress bar colours by state */
-    tr:has(td:nth-child(4) progress) progress {
-        color: var(--primary);
-    }
-    
-    tr:has(td:nth-child(5) progress) progress {
-        color: var(--primary);
-    }
-    
-    tr:has(td:nth-child(6) progress) progress {
-        color: var(--secondary);
-    }
-    
-    tr:has(td:nth-child(7) progress) progress {
-        color: var(--del-color);
-    }
-    
-    tr:has(td:nth-child(8) progress) progress {
-        color: var(--ins-color);
     }
 </style>
