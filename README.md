@@ -1,31 +1,37 @@
 # WipSim
 
-Shows why too much work in progress is a bad time. Smash tasks through your dev pipeline and watch productivity tank when you try to do everything at once.
+Proof that doing five things at once makes everything take longer. Watch your dev team's productivity tank in real-time as you pile on the work.
 
-## What's this then?
+## What it Shows
 
-Interactive sim showing how context switching and work-in-progress limits affect your team's output. Built because PowerPoint slides about Little's Law make everyone fall asleep.
+- Live simulation of work flowing (or not) through dev stages
+- Context switching penalties (because your brain isn't a CPU)
+- Impact of WIP limits on throughput and lead time
+- Why your "urgent" ticket is making everything slower
 
-Features:
-- Team simulation with skill specialties 
-- Context switching penalties (brutal but realistic)
-- Progress tracking per task
-- Configurable workflow stages
-- Example scenarios from software dev, hospitals and kitchens
+Built because PowerPoints about Little's Law are boring and managers need to feel the pain.
 
-## Local Dev
+## Features
+
+- Task generation with configurable complexity and arrival rates
+- Multi-skilled team simulation with context-switching costs
+- Real-time metrics showing your poor life choices
+- Examples from software dev, hospitals, and kitchens
+
+## Dev Setup
 
 ```bash
-npm install   # Get the goods
-npm run dev   # Fire it up
+# Get the code
+pnpm install
+
+# Start regretting your choices
+pnpm dev
 ```
 
-## Why?
+## Contributing
 
-Because every manager needs to learn that nine women can't make a baby in one month, and adding more work to an overloaded team is like trying to fill a pint glass with a fire hose.
+The irony of having multiple PRs in progress is not lost on us.
 
-## Stack
+## Prior Art
 
-- SvelteKit (because React is chunky)
-- Pico CSS (because no one likes maintaining CSS)
-- TypeScript (because any: never)
+Inspired by every project manager who's ever said "Can't you just squeeze this quick one in?"

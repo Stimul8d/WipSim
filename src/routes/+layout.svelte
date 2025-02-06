@@ -14,7 +14,6 @@
         <li>WIP: <strong>5</strong></li>
         <li>Done: <strong>12</strong></li>
         <li>Cycle Time: <strong>4.2m</strong></li>
-        <li><a href="https://github.com/davehunt00/wipsim">GitHub</a></li>
     </ul>
 </nav>
 
