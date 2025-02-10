@@ -1,32 +1,13 @@
 <script lang="ts">
     import type { Task } from '$lib/types/core';
-    import { TaskStatus, TaskType } from '$lib/types/constants';
+    import { TaskStatus } from '$lib/types/constants';
+    import { simStore } from '$lib/stores/simulation';
+    import { TeamControls, TaskControls, WorkTypeControls } from '$lib/components/controls';
     
-    let tasks: Task[] = [
-        {
-            id: "PRJ-123",
-            type: TaskType.FRONTEND,
-            status: TaskStatus.BACKLOG,
-            progress: 20,
-            complexity: 3,
-            assignedTo: { id: "1", name: "Dave", skills: [], currentTasks: [], efficiency: 1, maxTasks: 2 }
-        },
-        ...Array.from({ length: 20 }, (_, i) => ({
-            id: `PRJ-${i + 124}`,
-            type: Object.values(TaskType)[Math.floor(Math.random() * 4)],
-            status: Object.values(TaskStatus)[Math.floor(Math.random() * 4)],
-            progress: Math.floor(Math.random() * 100),
-            complexity: Math.floor(Math.random() * 5) + 1,
-            assignedTo: Math.random() > 0.5 ? { 
-                id: String(Math.floor(Math.random() * 3) + 1), 
-                name: ["Dave", "Alice", "Bob"][Math.floor(Math.random() * 3)], 
-                skills: [], 
-                currentTasks: [], 
-                efficiency: 1, 
-                maxTasks: 2 
-            } : undefined
-        }))
-    ];
+    let tasks: Task[] = [];
+    simStore.subscribe(state => {
+        tasks = state.tasks;
+    });
 
     function getStagePosition(task: Task): number {
         return Math.min(Math.floor(task.progress / 20), 4);
@@ -36,28 +17,9 @@
 <main>
     <aside class="controls">
         <div class="control-panel">
-            <details open>
-                <summary>Team Setup</summary>
-                <label>Engineers <input type="number" min="1" max="10" value="3"></label>
-                <label>Max WIP <input type="number" min="1" max="5" value="2"></label>
-            </details>
-
-            <details open>
-                <summary>Task Settings</summary>
-                <label>
-                    Arrival: <span>5m</span>
-                    <input type="range" min="1" max="10" value="5">
-                </label>
-                <label>Size: <input type="number" min="1" max="10" value="3"></label>
-            </details>
-
-            <details open>
-                <summary>Work Types</summary>
-                <label><input type="checkbox" checked> Frontend</label>
-                <label><input type="checkbox" checked> Backend</label>
-                <label><input type="checkbox" checked> DevOps</label>
-                <label><input type="checkbox" checked> Testing</label>
-            </details>
+            <TeamControls />
+            <TaskControls />
+            <WorkTypeControls />
         </div>
     </aside>
 
@@ -135,33 +97,6 @@
         border-radius: var(--border-radius);
         height: 100%;
         overflow-y: auto;
-    }
-
-    details {
-        margin-bottom: 1rem;
-    }
-
-    summary {
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0.25rem 0;
-        font-size: 0.9rem;
-    }
-
-    input[type="number"] {
-        width: 4rem;
-        padding: 0.2rem;
-        margin: 0;
-    }
-
-    input[type="range"] {
-        margin: 0;
     }
 
     .metric {

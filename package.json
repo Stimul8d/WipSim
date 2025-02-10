@@ -9,7 +9,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.0",
@@ -18,7 +20,9 @@
     "svelte": "^4.2.7",
     "svelte-check": "^3.6.0",
     "typescript": "^5.0.0",
-    "vite": "^5.0.3"
+    "vite": "^5.0.3",
+    "vitest": "^1.2.0",
+    "jest-cucumber": "^3.0.1"
   },
   "dependencies": {
     "@picocss/pico": "^1.5.10"
