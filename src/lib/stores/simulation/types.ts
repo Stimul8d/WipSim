@@ -1,9 +1,12 @@
+import type { Task } from '../../types/core'
+
 export interface Params {
-    tasks: any[]
+    tasks: Task[]
     engineers: number
     maxWip: number
     arrivalRate: number
     taskSize: number
+    startingTasks: number
     workTypes: {
         frontend: boolean
         backend: boolean

@@ -14,6 +14,7 @@ const defaultParams: Params = {
     maxWip: 1,
     arrivalRate: 1,
     taskSize: 1,
+    startingTasks: 1,
     workTypes: {
         frontend: true,
         backend: true,
