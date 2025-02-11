@@ -11,22 +11,44 @@ Proof that doing five things at once makes everything take longer. Watch your de
 
 Built because PowerPoints about Little's Law are boring and managers need to feel the pain.
 
-## Features
+## Tech Stack
 
-- Task generation with configurable complexity and arrival rates
-- Multi-skilled team simulation with context-switching costs
-- Real-time metrics showing your poor life choices
-- Examples from software dev, hospitals, and kitchens
+- SvelteKit (because React's chunky)
+- Pico CSS (because life's too short)
+- PNPM (because npm's having a mare)
+- Vitest + Jest-Cucumber for BDD
 
-## Dev Setup
+## Getting Started
 
 ```bash
-# Get the code
+# Grab dependencies
 pnpm install
 
-# Start regretting your choices
+# Run tests
+pnpm test
+
+# Start dev server
 pnpm dev
 ```
+
+## Testing
+
+We use BDD with Gherkin syntax. Tests live in `tests/features`.
+
+```bash
+# Run all tests
+pnpm test
+
+# Check types and linting
+pnpm run check
+```
+
+## Deployment
+
+Pushes to main trigger GitHub Actions to:
+1. Run tests
+2. Build static site
+3. Deploy to GitHub Pages
 
 ## Contributing
 

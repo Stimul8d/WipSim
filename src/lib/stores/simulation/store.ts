@@ -1,8 +1,15 @@
 import { writable } from 'svelte/store'
 import type { Params } from './types'
+import { TaskType, TaskStatus } from '../../types/constants'
 
 const defaultParams: Params = {
-    tasks: [],
+    tasks: [{
+        id: 'TASK-1',
+        type: TaskType.FRONTEND,
+        status: TaskStatus.BACKLOG,
+        progress: 0,
+        complexity: 1
+    }],
     engineers: 1,
     maxWip: 1,
     arrivalRate: 1,
@@ -15,6 +22,14 @@ const defaultParams: Params = {
     }
 }
 
-export const store = writable<Params>(defaultParams)
+function createStore() {
+    const { subscribe, set, update } = writable<Params>(defaultParams)
+    return {
+        subscribe,
+        set,
+        update,
+        reset: () => set(defaultParams)
+    }
+}
 
-export const reset = () => store.set(defaultParams)
+export const simStore = createStore()
