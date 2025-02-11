@@ -1,8 +1,16 @@
-Feature: Control Panel
+Feature: Control Sync
   As a simulation user
-  I want controls to start at sensible defaults
-  So that I can quickly run basic scenarios
+  I want controls to sync with the store
+  So my changes affect the simulation
 
-  Scenario: Default control values
-    Given I load the simulation page
-    Then all control values should be set to 1
+  Scenario Outline: Control updates sync to store
+    Given I load the simulation
+    When I change <control> to <value>
+    Then the store should reflect that change
+
+    Examples:
+      | control     | value |
+      | engineers   | 5     |
+      | maxWip      | 3     |
+      | arrivalRate | 7     |
+      | taskSize    | 4     |

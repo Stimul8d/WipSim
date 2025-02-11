@@ -1,0 +1,40 @@
+import { defineFeature, loadFeature } from 'jest-cucumber'
+import { test, expect } from 'vitest'
+import { simStore } from '../../src/lib/stores/simulation'
+
+const feature = loadFeature('./tests/features/team.feature')
+
+defineFeature(feature, test => {
+  test('Default parameter values', ({ given, then }) => {
+    let state: any
+
+    given('I load the simulation', () => {
+      simStore.subscribe(s => state = s)
+    })
+
+    then('engineers should be set to 1', () => {
+      expect(state.engineers).toBe(1)
+    })
+
+    then('max WIP should be set to 1', () => {
+      expect(state.maxWip).toBe(1)
+    })
+
+    then('arrival rate should be set to 1', () => {
+      expect(state.arrivalRate).toBe(1)
+    })
+
+    then('task size should be set to 1', () => {
+      expect(state.taskSize).toBe(1)
+    })
+
+    then('all work types should be enabled', () => {
+      expect(state.workTypes).toEqual({
+        frontend: true,
+        backend: true,
+        devops: true,
+        testing: true
+      })
+    })
+  })
+})
