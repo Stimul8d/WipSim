@@ -6,7 +6,7 @@
     
     let tasks: Task[] = [];
     simStore.subscribe(state => {
-        tasks = state.tasks;
+        tasks = [...state.tasks];
     });
 
     function getStagePosition(task: Task): number {
@@ -39,7 +39,7 @@
                 </tr>
             </thead>
             <tbody>
-                {#each tasks as task}
+                {#each tasks.slice(0, 10) as task}
                     <tr>
                         <td class="mono">{task.id}</td>
                         <td>{task.type}</td>

@@ -1,11 +1,11 @@
 <script lang="ts">
     import '@picocss/pico'
-    import { simStore, resetSim } from '$lib/stores/simulation'
+    import { simStore } from '$lib/stores/simulation'
 
     let running = false
     
-    function newSim() {
-        resetSim()
+    function reset() {
+        simStore.reset()
     }
 </script>
 
@@ -13,8 +13,7 @@
     <ul>
         <li><strong>WipSim</strong></li>
         <li><button on:click={() => running = !running}>{running ? 'Stop' : 'Start'}</button></li>
-        <li><button on:click={resetSim}>Reset</button></li>
-        <li><button on:click={newSim}>New</button></li>
+        <li><button on:click={reset}>Reset</button></li>
         <li><span id="time">00:00</span></li>
     </ul>
     <ul>
