@@ -12,8 +12,8 @@ defineFeature(feature, test => {
             simStore.subscribe(s => state = s)
         })
 
-        then('engineers should be set to 1', () => {
-            expect(state.engineers).toBe(1)
+        then('there should be one worker', () => {
+            expect(state.workers.length).toBe(1)
         })
 
         then('max WIP should be set to 1', () => {

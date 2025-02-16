@@ -4,7 +4,7 @@ export interface Worker {
     id: string
     name: string
     skills: Skill[]
-    currentTasks: Task[]
+    currentTasks: string[]  // Just store task IDs
     efficiency: number 
     maxTasks: number
 }
@@ -15,15 +15,10 @@ export interface Task {
     status: TaskStatus
     progress: number
     complexity: number
-    assignedTo?: Worker
-    startedAt?: Date
-    blockedBy?: Task[]
+    assignedTo?: string    // Store worker ID
 }
 
 export interface Skill {
     type: TaskType
     level: number // 1-5
 }
-
-// Re-export for convenience
-export type { TaskStatus, TaskType };

@@ -2,8 +2,22 @@
     import '@picocss/pico'
     import { simStore } from '$lib/stores/simulation'
 
+    let time = '00:00'
     let running = false
+
+    simStore.subscribe(state => {
+        running = state.running
+        time = state.time
+    })
     
+    function toggleRunning() {
+        if (running) {
+            simStore.stop()
+        } else {
+            simStore.start()
+        }
+    }
+
     function reset() {
         simStore.reset()
     }
@@ -12,9 +26,9 @@
 <nav class="app-header">
     <ul>
         <li><strong>WipSim</strong></li>
-        <li><button on:click={() => running = !running}>{running ? 'Stop' : 'Start'}</button></li>
+        <li><button on:click={toggleRunning}>{running ? 'Stop' : 'Start'}</button></li>
         <li><button on:click={reset}>Reset</button></li>
-        <li><span id="time">00:00</span></li>
+        <li><span id="time">{time}</span></li>
     </ul>
     <ul>
         <li>Tasks: <strong>23</strong></li>

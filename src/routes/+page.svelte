@@ -1,16 +1,19 @@
 <script lang="ts">
-    import type { Task } from '$lib/types/core';
-    import { TaskStatus } from '$lib/types/constants';
-    import { simStore } from '$lib/stores/simulation';
-    import { TeamControls, TaskControls, WorkTypeControls } from '$lib/components/controls';
+    import type { Task, Worker } from '$lib/types/core'
+    import { TaskStatus } from '$lib/types/constants'
+    import { simStore } from '$lib/stores/simulation'
+    import { TeamControls, TaskControls, WorkTypeControls } from '$lib/components/controls'
     
-    let tasks: Task[] = [];
+    let tasks: Task[] = []
+    let workerMap: Map<string, Worker>
+
     simStore.subscribe(state => {
-        tasks = [...state.tasks];
-    });
+        tasks = [...state.tasks]
+        workerMap = state.workerMap
+    })
 
     function getStagePosition(task: Task): number {
-        return Math.min(Math.floor(task.progress / 20), 4);
+        return Math.min(Math.floor(task.progress / 20), 4)
     }
 </script>
 
@@ -43,7 +46,7 @@
                     <tr>
                         <td class="mono">{task.id}</td>
                         <td>{task.type}</td>
-                        <td>{task.assignedTo?.name || '-'}</td>
+                        <td>{task.assignedTo ? workerMap.get(task.assignedTo)?.name : '-'}</td>
                         
                         {#each Array(5) as _, i}
                             <td class="stage-col">

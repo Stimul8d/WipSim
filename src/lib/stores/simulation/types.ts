@@ -1,15 +1,17 @@
-import type { Task } from '../../types/core'
+import type { Task, Worker } from '../../types/core'
 
 export interface Params {
     tasks: Task[]
-    engineers: number
+    workers: Worker[]
     maxWip: number
     arrivalRate: number
     taskSize: number
     startingTasks: number
+    time: string
+    running: boolean
     workTypes: {
         frontend: boolean
-        backend: boolean
+        backend: true 
         devops: boolean
         testing: boolean
     }
