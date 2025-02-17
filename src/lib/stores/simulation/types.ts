@@ -11,8 +11,15 @@ export interface Params {
     running: boolean
     workTypes: {
         frontend: boolean
-        backend: true 
+        backend: boolean 
         devops: boolean
         testing: boolean
     }
 }
+
+export interface SimState extends Params {
+    workerMap: Map<string, Worker>
+    simTicks: number
+}
+
+export type StoreUpdater = (state: SimState) => SimState

@@ -1,8 +1,9 @@
 import { defineFeature, loadFeature } from 'jest-cucumber'
 import { test, expect, beforeEach } from 'vitest'
 import { TaskStatus } from '../../src/lib/types/constants'
-import { createStore } from '../../src/lib/stores/simulation/store'
+import { createStore, type SimState } from '../../src/lib/stores/simulation/store'
 import { runAllocation } from '../utils'
+import type { Task, Worker } from '../../src/lib/types/core'
 
 const feature = loadFeature('./tests/features/parallel.feature')
 
@@ -14,7 +15,7 @@ defineFeature(feature, test => {
     })
 
     test('Four workers and four tasks', ({ given, when, then }) => {
-        let state: any
+        let state: SimState
         
         given('4 workers and 4 tasks in backlog', () => {
             store.update(s => ({ ...s, startingTasks: 4 }))
@@ -39,13 +40,13 @@ defineFeature(feature, test => {
         })
 
         then('all tasks should be allocated in the first tick', () => {
-            expect(state.tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length).toBe(4)
-            expect(state.workers.every(w => w.currentTasks.length === 1)).toBe(true)
+            expect(state.tasks.filter((t: Task) => t.status === TaskStatus.IN_PROGRESS).length).toBe(4)
+            expect(state.workers.every((w: Worker) => w.currentTasks.length === 1)).toBe(true)
         })
     })
 
     test('Respecting WIP limits', ({ given, and, when, then }) => {
-        let state: any
+        let state: SimState
         
         given('4 workers with max WIP of 2 each', () => {
             store.update(s => ({
@@ -73,8 +74,8 @@ defineFeature(feature, test => {
         })
 
         then('all workers should have 2 tasks each', () => {
-            expect(state.tasks.filter(t => t.status === TaskStatus.IN_PROGRESS).length).toBe(8)
-            expect(state.workers.every(w => w.currentTasks.length === 2)).toBe(true)
+            expect(state.tasks.filter((t: Task) => t.status === TaskStatus.IN_PROGRESS).length).toBe(8)
+            expect(state.workers.every((w: Worker) => w.currentTasks.length === 2)).toBe(true)
         })
     })
 })

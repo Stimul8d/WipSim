@@ -2,6 +2,7 @@ import { defineFeature, loadFeature } from 'jest-cucumber'
 import { test, expect } from 'vitest'
 import { simStore } from '../../src/lib/stores/simulation'
 import { TaskStatus } from '../../src/lib/types/constants'
+import type { Worker } from '../../src/lib/types/core'
 
 const feature = loadFeature('./tests/features/reset.feature')
 
@@ -10,13 +11,20 @@ defineFeature(feature, test => {
         let state: any
 
         given('a simulation with multiple tasks and workers', () => {
+            const newWorker: Worker = {
+                id: 'ENG-2',
+                name: 'Test 2',
+                currentTasks: [],
+                efficiency: 1,
+                maxTasks: 1,
+                skills: []
+            }
             simStore.update(s => ({
                 ...s,
                 startingTasks: 5,
-                workers: [...s.workers, { id: 'ENG-2', name: 'Test 2'}]
+                workers: [...s.workers, newWorker]
             }))
             simStore.start()
-            // Let some time pass
             state = { simTicks: 10 }
             simStore.update(s => ({ ...s, ...state }))
         })
@@ -32,8 +40,8 @@ defineFeature(feature, test => {
             expect(state.tasks[0].status).toBe(TaskStatus.BACKLOG)
         })
 
-        and('time should be 00:00', () => {
-            expect(state.time).toBe('00:00')
+        and(/^time should be (\d+):(\d+)$/, (minutes, seconds) => {
+            expect(state.time).toBe('D0:00')
             expect(state.simTicks).toBe(0)
         })
 
@@ -51,6 +59,7 @@ defineFeature(feature, test => {
                 arrivalRate: 3,
                 maxWip: 5
             }))
+            simStore.subscribe(s => { state = s })()
         })
 
         when('I reset the simulation', () => {
@@ -59,12 +68,10 @@ defineFeature(feature, test => {
         })
 
         then('arrival rate should still be 3', () => {
-            // Settings that should persist
             expect(state.arrivalRate).toBe(3)
             expect(state.maxWip).toBe(5)
-            // But time-based stuff resets
             expect(state.simTicks).toBe(0)
-            expect(state.time).toBe('00:00')
+            expect(state.time).toBe('D0:00')
         })
     })
 })

@@ -15,6 +15,10 @@ describe('task timing', () => {
         task.status = TaskStatus.DONE
         task.completedAt = Date.now()
 
+        if (!task.startedAt || !task.completedAt) {
+            throw new Error('Task timing not set')
+        }
+        
         const cycleTime = (task.completedAt - task.startedAt) / 1000 
         expect(cycleTime).toBeGreaterThanOrEqual(5)
         expect(cycleTime).toBeLessThan(6) // Allow 1s buffer
@@ -34,6 +38,10 @@ describe('task timing', () => {
         // Complete it
         task.status = TaskStatus.DONE
         task.completedAt = Date.now()
+
+        if (!task.completedAt) {
+            throw new Error('Task completion time not set')
+        }
 
         const leadTime = (task.completedAt - task.createdAt) / 1000
         expect(leadTime).toBeGreaterThanOrEqual(5)

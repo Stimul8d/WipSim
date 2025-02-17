@@ -1,17 +1,17 @@
 import { writable } from 'svelte/store'
-import type { Params } from './types'
-import type { Worker } from '../../types/core'
+import type { Params, SimState, StoreUpdater } from './types'
+import type { Worker, Task } from '../../types/core'
 import { TaskStatus, TaskType as TT } from '../../types/constants'
 import { SIM_SPEED, SIM_TIME } from './constants'
 
-export function getRandomTaskType(workTypes: Params['workTypes']) {
+function getRandomTaskType(workTypes: Params['workTypes']): TT {
     const enabledTypes = Object.entries(workTypes)
         .filter(([_, enabled]) => enabled)
         .map(([type]) => type.toUpperCase() as TT)
     return enabledTypes[Math.floor(Math.random() * enabledTypes.length)]
 }
 
-export function generateTask(id: number, workTypes: Params['workTypes'], tick: number) {
+function generateTask(id: number, workTypes: Params['workTypes'], tick: number): Task {
     return {
         id: `TASK-${id}`,
         type: id === 1 ? TT.FRONTEND : getRandomTaskType(workTypes),
@@ -22,7 +22,7 @@ export function generateTask(id: number, workTypes: Params['workTypes'], tick: n
     }
 }
 
-export function generateWorker(id: number) {
+function generateWorker(id: number): Worker {
     return {
         id: `ENG-${id}`,
         name: `Engineer ${id}`,
@@ -40,25 +40,7 @@ function buildWorkerMap(workers: Worker[]): Map<string, Worker> {
     return new Map(workers.map(w => [w.id, { ...w }]))
 }
 
-export interface SimState extends Params {
-    workerMap: Map<string, Worker>
-    simTicks: number
-}
-
-function resetState(currentState: SimState): SimState {
-    const worker = generateWorker(1)
-    return {
-        ...currentState,
-        tasks: [generateTask(1, currentState.workTypes, 0)],
-        workers: [worker],
-        workerMap: new Map([[worker.id, { ...worker }]]),
-        time: '00:00',
-        running: false,
-        simTicks: 0
-    }
-}
-
-export const initialState: SimState = {
+const initialState: SimState = {
     tasks: [generateTask(1, { frontend: true, backend: true, devops: true, testing: true }, 0)],
     workers: [generateWorker(1)],
     workerMap: new Map([[generateWorker(1).id, generateWorker(1)]]),
@@ -66,7 +48,7 @@ export const initialState: SimState = {
     arrivalRate: 1,
     taskSize: 1,
     startingTasks: 1,
-    time: '00:00',
+    time: 'D0:00',  
     running: false,
     simTicks: 0,
     workTypes: {
@@ -77,21 +59,27 @@ export const initialState: SimState = {
     }
 }
 
-export function formatSimTime(ticks: number): string {
+function resetState(currentState: SimState): SimState {
+    const worker = generateWorker(1)
+    return {
+        ...currentState,
+        tasks: [generateTask(1, currentState.workTypes, 0)],
+        workers: [worker],
+        workerMap: new Map([[worker.id, { ...worker }]]),
+        time: 'D0:00',
+        running: false,
+        simTicks: 0
+    }
+}
+
+function formatSimTime(ticks: number): string {
     const hours = ticks * SIM_TIME.TICK_HOURS
     const days = Math.floor(hours / 24)
     const remainingHours = hours % 24
     return `D${days}:${remainingHours.toString().padStart(2, '0')}`
 }
 
-export function formatDuration(ticks: number): string {
-    const hours = ticks * SIM_TIME.TICK_HOURS
-    return hours < 24 
-        ? `${hours}h`
-        : `${Math.floor(hours/24)}d ${hours % 24}h`
-}
-
-function tryAllocateTasks(workers: Worker[], tasks: Params['tasks'], tick: number) {
+function tryAllocateTasks(workers: Worker[], tasks: Task[], tick: number): void {
     let allocated = true
     while (allocated) {
         const freeWorker = workers.find(w => w.currentTasks.length < w.maxTasks)
@@ -108,7 +96,7 @@ function tryAllocateTasks(workers: Worker[], tasks: Params['tasks'], tick: numbe
     }
 }
 
-function progressTasks(tasks: Params['tasks'], workers: Worker[], tick: number) {
+function progressTasks(tasks: Task[], workers: Worker[], tick: number): void {
     tasks.forEach(task => {
         if (task.assignedTo && task.status === TaskStatus.IN_PROGRESS) {
             task.progress = Math.min(100, task.progress + SIM_SPEED.PROGRESS_PCT)
@@ -127,12 +115,12 @@ function progressTasks(tasks: Params['tasks'], workers: Worker[], tick: number) 
 
 export function createStore() {
     const { subscribe, set, update } = writable<SimState>(initialState)
-    let timer: ReturnType<typeof setInterval>
+    let timer: NodeJS.Timeout | undefined
 
-    return {
+    const store = {
         subscribe,
         set,
-        update: (updater: (state: SimState) => SimState) => {
+        update: (updater: StoreUpdater) => {
             update(state => {
                 const newState = updater(state)
                 if (newState.startingTasks !== state.startingTasks || newState.workTypes !== state.workTypes) {
@@ -148,7 +136,7 @@ export function createStore() {
             })
         },
         reset: () => {
-            clearInterval(timer)
+            if (timer) clearInterval(timer)
             timer = undefined
             update(state => resetState(state))
         },
@@ -167,11 +155,14 @@ export function createStore() {
             }, SIM_SPEED.TICK_MS)
         },
         stop: () => {
-            clearInterval(timer)
+            if (timer) clearInterval(timer)
             timer = undefined
             update(s => ({ ...s, running: false }))
         }
     }
+
+    return store
 }
 
 export const simStore = createStore()
+export type { SimState, StoreUpdater }
