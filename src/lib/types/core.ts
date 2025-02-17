@@ -16,6 +16,9 @@ export interface Task {
     progress: number
     complexity: number
     assignedTo?: string    // Store worker ID
+    createdAt: number      // Epoch ms when generated
+    startedAt?: number     // Epoch when first picked up 
+    completedAt?: number   // Epoch when done
 }
 
 export interface Skill {

@@ -15,6 +15,23 @@
     function getStagePosition(task: Task): number {
         return Math.min(Math.floor(task.progress / 20), 4)
     }
+
+    function getDuration(ticks: number): string {
+        const hours = ticks * 4 // Each tick is 4 hours
+        return hours < 24 
+            ? `${hours}h`
+            : `${Math.floor(hours/24)}d ${hours % 24}h`
+    }
+
+    function getCycleTime(task: Task): string {
+        if (!task.completedAt || !task.startedAt) return '-'
+        return getDuration(task.completedAt - task.startedAt)
+    }
+
+    function getLeadTime(task: Task): string {
+        if (!task.completedAt) return '-'
+        return getDuration(task.completedAt - task.createdAt)  
+    }
 </script>
 
 <main>
@@ -38,7 +55,8 @@
                     <th class="stage-col">Dev</th>
                     <th class="stage-col">Test</th>
                     <th class="stage-col">Done</th>
-                    <th>Age</th>
+                    <th>Cycle</th>
+                    <th>Lead</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,7 +74,8 @@
                             </td>
                         {/each}
                         
-                        <td class="mono">2m</td>
+                        <td class="mono">{getCycleTime(task)}</td>
+                        <td class="mono">{getLeadTime(task)}</td>
                     </tr>
                 {/each}
             </tbody>
