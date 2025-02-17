@@ -2,6 +2,7 @@ import { writable } from 'svelte/store'
 import type { Params } from './types'
 import type { Worker } from '../../types/core'
 import { TaskStatus, TaskType as TT } from '../../types/constants'
+import { SIM_SPEED } from './constants'
 
 function getRandomTaskType(workTypes: Params['workTypes']) {
     const enabledTypes = Object.entries(workTypes)
@@ -77,10 +78,18 @@ function tryAllocateTasks(workers: Worker[], tasks: Params['tasks']) {
     }
 }
 
-function progressTasks(tasks: Params['tasks']) {
+function progressTasks(tasks: Params['tasks'], workers: Worker[]) {
     tasks.forEach(task => {
         if (task.assignedTo && task.status === TaskStatus.IN_PROGRESS) {
-            task.progress = Math.min(100, task.progress + 10)
+            task.progress = Math.min(100, task.progress + SIM_SPEED.PROGRESS_PCT)
+            if (task.progress === 100) {
+                const worker = workers.find(w => w.id === task.assignedTo)
+                if (worker) {
+                    worker.currentTasks = worker.currentTasks.filter(id => id !== task.id)
+                    task.assignedTo = undefined
+                    task.status = TaskStatus.DONE
+                }
+            }
         }
     })
 }
@@ -96,14 +105,12 @@ function createStore() {
         update: (updater: (state: SimState) => SimState) => {
             update(state => {
                 const newState = updater(state)
-                // Regenerate tasks if count changes
                 if (newState.startingTasks !== state.startingTasks || newState.workTypes !== state.workTypes) {
                     newState.tasks = Array.from(
                         { length: newState.startingTasks }, 
                         (_, i) => generateTask(i + 1, newState.workTypes)
                     )
                 }
-                // Keep worker map in sync
                 if (newState.workers !== state.workers) {
                     newState.workerMap = buildWorkerMap(newState.workers)
                 }
@@ -119,11 +126,11 @@ function createStore() {
             update(s => ({ ...s, running: true }))
             timer = setInterval(() => {
                 update(s => {
+                    progressTasks(s.tasks, s.workers)
                     tryAllocateTasks(s.workers, s.tasks)
-                    progressTasks(s.tasks)
                     return { ...s, time: formatTime(++seconds) }
                 })
-            }, 1000)
+            }, SIM_SPEED.TICK_MS)
         },
         stop: () => {
             clearInterval(timer)
