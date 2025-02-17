@@ -1,22 +1,24 @@
-# WipSim Development Notes
+# WipSim Dev Notes
 
 ## Done
-- Three-panel layout sorted
-- Param store working
-- Tests passing for blank state (1 task)
-- BDD framework proven
+- Three panel layout works 
+- Parameter store synced
+- Token movement transitions
+- Base task allocation (grab next free)
+- Lead/cycle time tracking (bit wonky)
 
 ## Next Up
-- Task token movement
-- Worker allocation logic
-- Proper time progression
+- Fix task timing (500 error in tests)
+- Add task stage transitions
+- Hook up metrics panel
+- Proper task limits per stage
 
-## Gotchas
-- Fixed panels > scrolling mess
-- Token movement > progress bars
-- Test-first saved faff with store setup
+## Issues
+- Task timing calc needs sorting (started vs created)
+- UI doesn't show stage transitions clearly
+- No bottleneck viz yet
 
 ## Questions
-- Dependencies between tasks?
-- Interruptions/urgent work?
-- Context switch penalties?
+- Show efficiency hit from context switching?
+- Track interruptions/urgent work?
+- Add task dependencies?

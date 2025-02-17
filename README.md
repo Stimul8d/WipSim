@@ -3,57 +3,49 @@
 Proof that doing five things at once makes everything take longer. Watch your dev team's productivity tank in real-time as you pile on the work.
 
 ## What it Shows
-
-- Live simulation of work flowing (or not) through dev stages
-- Context switching penalties (because your brain isn't a CPU)
-- Impact of WIP limits on throughput and lead time
-- Why your "urgent" ticket is making everything slower
+- Live simulation of task flow
+- Context switching kills productivity
+- How WIP limits affect throughput
+- The true cost of "urgent" interruptions
 
 Built because PowerPoints about Little's Law are boring and managers need to feel the pain.
 
-## Tech Stack
+## Features
+- Token-based task visualisation
+- Real-time cycle/lead time tracking
+- Context switch overhead simulation
+- Stage-by-stage bottleneck detection
 
-- SvelteKit (because React's chunky)
-- Pico CSS (because life's too short)
+## Tech Stack
+- SvelteKit (better than React)
+- Pico CSS (life's too short)
 - PNPM (because npm's having a mare)
-- Vitest + Jest-Cucumber for BDD
+- BDD with Jest-Cucumber
 
 ## Getting Started
-
 ```bash
-# Grab dependencies
+# Dependencies
 pnpm install
 
-# Run tests
+# Tests (BDD)
 pnpm test
 
-# Start dev server
+# Dev server
 pnpm dev
 ```
 
 ## Testing
-
-We use BDD with Gherkin syntax. Tests live in `tests/features`.
-
+Gherkin specs in `tests/features`. Run with:
 ```bash
-# Run all tests
 pnpm test
-
-# Check types and linting
 pnpm run check
 ```
 
 ## Deployment
-
-Pushes to main trigger GitHub Actions to:
+Pushes to main trigger:
 1. Run tests
 2. Build static site
 3. Deploy to GitHub Pages
 
-## Contributing
-
-The irony of having multiple PRs in progress is not lost on us.
-
 ## Prior Art
-
-Inspired by every project manager who's ever said "Can't you just squeeze this quick one in?"
+Inspired by a manager asking "Can't you just squeeze this quick one in?"
